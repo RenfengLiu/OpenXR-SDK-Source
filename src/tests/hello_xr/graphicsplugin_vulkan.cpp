@@ -7,6 +7,7 @@
 #include "geometry.h"
 #include "graphicsplugin.h"
 #include "options.h"
+#include "vulkan/vulkan_core.h"
 
 #ifdef XR_USE_GRAPHICS_API_VULKAN
 #include <common/vulkan_debug_object_namer.hpp>
@@ -1377,6 +1378,7 @@ struct VulkanGraphicsPlugin : public IGraphicsPlugin {
 #error CreateSurface not supported on this OS
 #endif  // defined(VK_USE_PLATFORM_WIN32_KHR)
 #endif  // defined(USE_MIRROR_WINDOW)
+        extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 
         VkApplicationInfo appInfo{VK_STRUCTURE_TYPE_APPLICATION_INFO};
         appInfo.pApplicationName = "hello_xr";
@@ -1420,6 +1422,7 @@ struct VulkanGraphicsPlugin : public IGraphicsPlugin {
             CHECK_VKCMD(vkCreateDebugUtilsMessengerEXT(m_vkInstance, &debugInfo, nullptr, &m_vkDebugUtilsMessenger));
         }
 
+        vkCmdInsertDebugUtilsLabelEXT = (PFN_vkCmdInsertDebugUtilsLabelEXT)vkGetInstanceProcAddr(m_vkInstance, "vkCmdInsertDebugUtilsLabelEXT");
         XrVulkanGraphicsDeviceGetInfoKHR deviceGetInfo{XR_TYPE_VULKAN_GRAPHICS_DEVICE_GET_INFO_KHR};
         deviceGetInfo.systemId = systemId;
         deviceGetInfo.vulkanInstance = m_vkInstance;
@@ -1658,6 +1661,18 @@ struct VulkanGraphicsPlugin : public IGraphicsPlugin {
 
         vkCmdEndRenderPass(m_cmdBuffer.buf);
 
+
+        const char* marker = "vr-marker,frame_end,type,application";
+        VkDebugUtilsLabelEXT markerInfo{};
+        markerInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+        markerInfo.pNext = nullptr;
+        markerInfo.pLabelName = marker;
+        Log::Write(Log::Level::Info, marker);
+        // markerInfo.pLabelName = "vr-marker,frame_end";
+        // Log::Write(Log::Level::Info, "vr-marker,frame_end");
+
+
+        vkCmdInsertDebugUtilsLabelEXT(m_cmdBuffer.buf, &markerInfo);
         m_cmdBuffer.End();
         m_cmdBuffer.Exec(m_vkQueue);
 
@@ -1702,6 +1717,7 @@ struct VulkanGraphicsPlugin : public IGraphicsPlugin {
     PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT{nullptr};
     PFN_vkDestroyDebugUtilsMessengerEXT vkDestroyDebugUtilsMessengerEXT{nullptr};
     VkDebugUtilsMessengerEXT m_vkDebugUtilsMessenger{VK_NULL_HANDLE};
+    PFN_vkCmdInsertDebugUtilsLabelEXT vkCmdInsertDebugUtilsLabelEXT{nullptr};
 
     static std::string vkObjectTypeToString(VkObjectType objectType) {
         std::string objName;

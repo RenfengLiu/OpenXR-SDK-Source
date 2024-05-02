@@ -25,7 +25,10 @@
   <!-- If building externally with the OpenXR loader AAR, this would be merged in automatically. -->
   <uses-permission android:name="org.khronos.openxr.permission.OPENXR" />
   <uses-permission android:name="org.khronos.openxr.permission.OPENXR_SYSTEM" />
-
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
   <queries>
     <!-- to talk to the broker -->
     <provider android:authorities="org.khronos.openxr.runtime_broker;org.khronos.openxr.system_runtime_broker" />
@@ -45,6 +48,8 @@
     android:hasCode="false"
     android:icon="@mipmap/ic_helloxr_launcher"
     android:label="@string/app_name"
+    android:debuggable="true"
+      android:requestLegacyExternalStorage="true"
     android:roundIcon="@mipmap/ic_helloxr_launcher">
 
     <!-- The activity is the built-in NativeActivity framework class. -->
@@ -72,4 +77,5 @@
       </intent-filter>
     </activity>
   </application>
+
 </manifest>

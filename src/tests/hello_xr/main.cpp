@@ -195,9 +195,19 @@ static void app_handle_cmd(struct android_app* app, int32_t cmd) {
  */
 void android_main(struct android_app* app) {
     try {
+        // const char* LD_PRELOD = std::getenv("LD_PRELOAD");
+        // std::string msg ="LD_PRELOD :";
+        // if(LD_PRELOD)
+        //     msg = msg + std::string(LD_PRELOD);
+        // Log::Write(Log::Level::Info, msg);
+        // const char* enable_dive = std::getenv("ENABLE_XR_API_LAYER_DIVE_1");
+        // msg = "enable_dive : ENABLE_XR_API_LAYER_DIVE_1: ";
+        // if(enable_dive)
+        //     msg = msg + std::string(enable_dive);
+        // Log::Write(Log::Level::Info, msg);
+        
         JNIEnv* Env;
         app->activity->vm->AttachCurrentThread(&Env, nullptr);
-
         AndroidAppState appState = {};
 
         app->userData = &appState;

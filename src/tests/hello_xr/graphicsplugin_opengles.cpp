@@ -335,6 +335,7 @@ struct OpenGLESGraphicsPlugin : public IGraphicsPlugin {
         glBindVertexArray(0);
         glUseProgram(0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        // glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_MARKER, 123, GL_DEBUG_SEVERITY_NOTIFICATION, -1,  "vr-marker,frame_end,type,application");
     }
 
     uint32_t GetSupportedSwapchainSampleCount(const XrViewConfigurationView&) override { return 1; }

@@ -782,6 +782,7 @@ void ApiLayerManifestFile::AddManifestFilesAndroid(const std::string &openxr_com
 void ApiLayerManifestFile::CreateIfValid(ManifestFileType type, const std::string &filename, std::istream &json_stream,
                                          LibraryLocator locate_library,
                                          std::vector<std::unique_ptr<ApiLayerManifestFile>> &manifest_files) {
+    LoaderLogger::LogErrorMessage("", "test loader with hello_xr application. xxxxxxxxxxxxxxxxxx");
     std::ostringstream error_ss("ApiLayerManifestFile::CreateIfValid ");
     Json::CharReaderBuilder builder;
     std::string errors;
@@ -826,7 +827,16 @@ void ApiLayerManifestFile::CreateIfValid(ManifestFileType type, const std::strin
         if (!layer_root_node["enable_environment"].isNull() && layer_root_node["enable_environment"].isString()) {
             std::string env_var = layer_root_node["enable_environment"].asString();
             // If it's not set in the environment, disable the layer
+            auto env = std::getenv("ENABLE_XR_API_LAYER_DIVE_1");
+            if(env) {
+                LoaderLogger::LogErrorMessage("", "std::get env ENABLE_XR_API_LAYER_DIVE_1=" + std::string(env));
+            } else {
+                LoaderLogger::LogErrorMessage("", "failed to get env via std::getenv");
+            }
+            
             if (!PlatformUtilsGetEnvSet(env_var.c_str())) {
+                std::string msg = "!PlatformUtilsGetEnvSet(env_var.c_str()), enable_environment " + env_var;
+                LoaderLogger::LogErrorMessage("", msg);
                 enabled = false;
             }
         }
@@ -834,6 +844,7 @@ void ApiLayerManifestFile::CreateIfValid(ManifestFileType type, const std::strin
         std::string env_var = layer_root_node["disable_environment"].asString();
         // If the env var is set, disable the layer. Disable env var overrides enable above
         if (PlatformUtilsGetEnvSet(env_var.c_str())) {
+            LoaderLogger::LogErrorMessage("","!PlatformUtilsGetEnvSet(env_var.c_str()), disable_environment");
             enabled = false;
         }
 
